@@ -383,7 +383,10 @@ describe("browserRuntimeRegistry guest lifecycle", () => {
 			expect(state.currentUrl).toBe("http://localhost:3000/");
 			expect(state.error?.code).toBe(-102);
 
-			fire(entry.webview, "did-stop-loading");
+			// A fresh main-frame load clears the earlier failure; a subframe
+			// failure during it must not bring the overlay back.
+			fire(entry.webview, "did-start-loading");
+			fire(entry.webview, "did-navigate", { url: "http://localhost:3000/" });
 			fire(entry.webview, "did-fail-load", {
 				errorCode: -105,
 				errorDescription: "ERR_NAME_NOT_RESOLVED",
